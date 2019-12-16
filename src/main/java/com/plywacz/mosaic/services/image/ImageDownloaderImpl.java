@@ -1,10 +1,10 @@
 package com.plywacz.mosaic.services.image;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -17,22 +17,27 @@ Date: 15.12.2019
 */
 @Service
 class ImageDownloaderImpl implements ImageDownloader {
-    private static final int MAX_IMG_NUMBER = 8;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(MAX_IMG_NUMBER);
+    private final ExecutorService executorService;
+
+    public ImageDownloaderImpl(@Value("${threads_num}") int threadNum) {
+        executorService = Executors.newFixedThreadPool(threadNum);
+    }
 
     public List<BufferedImage> getImagesAsync(String urls) {
         var urlArr = splitUrls(urls);
-        var imagesList = new ArrayList<BufferedImage>();
+        if (urlArr.length > 8 || urlArr.length < 1)
+            throw new IllegalArgumentException("you have to provide number of urls to images, that is between 0 and 8");
 
-        var futureSet = new ArrayList<Future<BufferedImage>>();
+        var imagesList = new ArrayList<BufferedImage>();
+        var futureList = new ArrayList<Future<BufferedImage>>();
         try {
             for (String url : urlArr) {
                 var futureImg = executorService.submit(
                         new ImageDownloadTask(url)
                 );
-                futureSet.add(futureImg);
+                futureList.add(futureImg);
             }
-            for (Future<BufferedImage> futureImg : futureSet) {
+            for (Future<BufferedImage> futureImg : futureList) {
                 imagesList.add(
                         futureImg.get()
                 );
