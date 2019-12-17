@@ -1,16 +1,13 @@
 package com.plywacz.mosaic.controllers;
 
 import com.plywacz.mosaic.services.ImageService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.awt.image.BufferedImage;
 
 /*
 Author: BeGieU
@@ -25,15 +22,13 @@ public class MosaicController {
     }
 
     @GetMapping(value = "/mosaic",
-            params = {"random", "resolution", "images"},
             produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] generateMosaic(
-            @RequestParam(value = "random", required = false) Long random,
-            @RequestParam(value = "resolution", required = false) String resolution,
+            @RequestParam(value = "random", required = false, defaultValue = "0") Integer random,
+            @RequestParam(value = "resolution", required = false, defaultValue = "2048x2048") String resolution,
             @RequestParam(value = "images") String images) {
 
-        var img = imageService.generateMosaic(random, resolution, images);
-        return img;
+        return imageService.generateMosaic(random, resolution, images);
 
     }
 
