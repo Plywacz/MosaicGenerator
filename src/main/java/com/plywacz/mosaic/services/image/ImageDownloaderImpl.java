@@ -52,6 +52,8 @@ class ImageDownloaderImpl implements ImageDownloader {
     }
 
     private String[] splitUrls(String urls) {
+        if(!urls.contains(","))
+            throw  new IllegalArgumentException("given urls must be splited by ',' character");
         return urls.split(",");
     }
 }
