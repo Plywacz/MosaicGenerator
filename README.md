@@ -20,3 +20,6 @@
   - Download project from github
   - run in Intellij IDEA
   - then run with example request, that is written above on postman app.
+ 
+## Example mosaic
+![example](https://i.ibb.co/DV0n06R/response.jpg)
